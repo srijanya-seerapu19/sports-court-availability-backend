@@ -39,15 +39,22 @@ public class CourtDataInitializer implements CommandLineRunner {
             new Court("Chess Board 5", "Chess", "Indoor Recreation Room")
         );
 
-        List<String> existingNames = courtRepository.findAll()
-            .stream()
-            .map(Court::getName)
-            .toList();
+        try {
+            List<String> existingNames = courtRepository.findAll()
+                .stream()
+                .map(Court::getName)
+                .toList();
 
-        List<Court> missingCourts = starterCourts.stream()
-            .filter(court -> !existingNames.contains(court.getName()))
-            .toList();
+            List<Court> missingCourts = starterCourts.stream()
+                .filter(court -> !existingNames.contains(court.getName()))
+                .toList();
 
-        courtRepository.saveAll(missingCourts);
+            if (!missingCourts.isEmpty()) {
+                courtRepository.saveAll(missingCourts);
+                System.out.println("CourtDataInitializer: Initialized " + missingCourts.size() + " starter courts.");
+            }
+        } catch (Exception ex) {
+            System.err.println("Warning: CourtDataInitializer could not initialize courts: " + ex.getMessage());
+        }
     }
 }

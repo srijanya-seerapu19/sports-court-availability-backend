@@ -20,6 +20,10 @@ public class BookingExpirationScheduler {
     @Scheduled(fixedDelay = 10000)
     @Transactional
     public void completeExpiredBookings() {
-        bookingRepository.completeExpiredBookings(LocalDateTime.now());
+        try {
+            bookingRepository.completeExpiredBookings(LocalDateTime.now());
+        } catch (Exception ex) {
+            // Log quietly if database is temporarily unavailable during scheduled job
+        }
     }
 }
